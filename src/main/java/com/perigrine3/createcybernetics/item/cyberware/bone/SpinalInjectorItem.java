@@ -150,9 +150,15 @@ public class SpinalInjectorItem extends Item implements ICyberwareItem {
                 int c = entry.contains(ENTRY_COUNT, Tag.TAG_INT) ? entry.getInt(ENTRY_COUNT) : 0;
                 c = Math.max(0, Math.min(cap, c));
 
-                base.setCount(1);
+                if (c <= 0) continue;
+
+                base.setCount(c);
                 intoInv.setItem(i, base);
-                if (counts != null && i < counts.length) counts[i] = c;
+
+                if (counts != null && i < counts.length) {
+                    counts[i] = c;
+                }
+
                 continue;
             }
 
@@ -163,9 +169,14 @@ public class SpinalInjectorItem extends Item implements ICyberwareItem {
             int c = legacy.getCount();
             c = Math.max(0, Math.min(cap, c));
 
-            legacy.setCount(1);
+            if (c <= 0) continue;
+
+            legacy.setCount(c);
             intoInv.setItem(i, legacy);
-            if (counts != null && i < counts.length) counts[i] = c;
+
+            if (counts != null && i < counts.length) {
+                counts[i] = c;
+            }
         }
     }
 
@@ -177,23 +188,24 @@ public class SpinalInjectorItem extends Item implements ICyberwareItem {
         for (int i = 0; i < SLOT_COUNT; i++) {
             ItemStack base = fromInv.getItem(i);
 
-            int c = (counts != null && i < counts.length) ? counts[i] : 0;
-
-            if (!base.isEmpty() && isInjectable(base) && c > 0) {
+            if (!base.isEmpty() && isInjectable(base)) {
                 int cap = maxStackFor(base);
-                c = Math.min(cap, c);
+                int c = Math.max(0, Math.min(cap, base.getCount()));
 
-                ItemStack rep = base.copy();
-                rep.setCount(1);
+                if (c > 0) {
+                    ItemStack rep = base.copy();
+                    rep.setCount(1);
 
-                CompoundTag entry = new CompoundTag();
-                entry.put(ENTRY_ITEM, rep.save(provider));
-                entry.putInt(ENTRY_COUNT, c);
+                    CompoundTag entry = new CompoundTag();
+                    entry.put(ENTRY_ITEM, rep.save(provider));
+                    entry.putInt(ENTRY_COUNT, c);
 
-                list.add(entry);
-            } else {
-                list.add(new CompoundTag());
+                    list.add(entry);
+                    continue;
+                }
             }
+
+            list.add(new CompoundTag());
         }
 
         CompoundTag all = getOrCreateRoot(injectorStack);
@@ -336,8 +348,13 @@ public class SpinalInjectorItem extends Item implements ICyberwareItem {
     ) {
         counts[slot] = Math.max(0, counts[slot] - 1);
 
+        ItemStack stored = tmp.getItem(slot);
+
         if (counts[slot] <= 0) {
             tmp.setItem(slot, ItemStack.EMPTY);
+        } else if (!stored.isEmpty()) {
+            stored.setCount(counts[slot]);
+            tmp.setItem(slot, stored);
         }
 
         saveIntoInstalledStack(injectorStack, provider, tmp, counts);

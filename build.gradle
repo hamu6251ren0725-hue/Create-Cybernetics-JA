@@ -188,6 +188,9 @@ dependencies {
 
     implementation "curse.maven:ears-412013:6166554"
 
+    implementation "curse.maven:sound-physics-perfected-1328492:7734849"
+    implementation "curse.maven:yacl-667299:7437845"
+
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.

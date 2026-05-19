@@ -41,7 +41,6 @@ public final class HumanityAttributeModifiers {
             return;
         }
 
-        resetBase(player);
         clearCyberwareCostModifiers(player);
 
         PlayerCyberwareData data = player.getData(ModAttachments.CYBERWARE);

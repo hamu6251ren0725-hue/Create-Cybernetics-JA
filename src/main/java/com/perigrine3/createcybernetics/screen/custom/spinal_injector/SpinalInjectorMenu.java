@@ -361,44 +361,44 @@ public class SpinalInjectorMenu extends AbstractContainerMenu {
 
     @Override
     public void removed(Player player) {
-        super.removed(player);
+        if (player instanceof ServerPlayer sp) {
+            sanitizeInjectorState();
+            syncCountsFromStacks();
 
-        if (!(player instanceof ServerPlayer sp)) {
-            return;
-        }
+            PlayerCyberwareData data = sp.hasData(ModAttachments.CYBERWARE) ? sp.getData(ModAttachments.CYBERWARE) : null;
 
-        sanitizeInjectorState();
-        syncCountsFromStacks();
+            ItemStack real = getRealInstalledInjectorStack(sp);
+            boolean stillInstalled = !real.isEmpty() && real.getItem() == ModItems.BONEUPGRADES_SPINALINJECTOR.get();
 
-        PlayerCyberwareData data = sp.hasData(ModAttachments.CYBERWARE) ? sp.getData(ModAttachments.CYBERWARE) : null;
+            if (stillInstalled && data != null) {
+                SpinalInjectorItem.saveIntoInstalledStack(real, provider, injectorInv, injectorCounts);
+                mirrorIntoPlayerData(sp, data);
 
-        ItemStack real = getRealInstalledInjectorStack(sp);
-        boolean stillInstalled = !real.isEmpty() && real.getItem() == ModItems.BONEUPGRADES_SPINALINJECTOR.get();
+                data.setDirty();
+                sp.syncData(ModAttachments.CYBERWARE);
 
-        if (stillInstalled && data != null) {
-            SpinalInjectorItem.saveIntoInstalledStack(real, provider, injectorInv, injectorCounts);
-            mirrorIntoPlayerData(sp, data);
-
-            data.setDirty();
-            sp.syncData(ModAttachments.CYBERWARE);
-            return;
-        }
-
-        ItemStack toDrop = real.isEmpty() ? serverFallbackSnapshot : real;
-
-        if (!toDrop.isEmpty()) {
-            SpinalInjectorItem.saveIntoInstalledStack(toDrop, provider, injectorInv, injectorCounts);
-            SpinalInjectorItem.dropAndClearInstalledStack(sp, provider, toDrop);
-        }
-
-        if (data != null) {
-            for (int i = 0; i < SpinalInjectorItem.SLOT_COUNT; i++) {
-                data.setSpinalInjectorStack(i, ItemStack.EMPTY);
+                super.removed(player);
+                return;
             }
 
-            data.setDirty();
-            sp.syncData(ModAttachments.CYBERWARE);
+            ItemStack toDrop = real.isEmpty() ? serverFallbackSnapshot : real;
+
+            if (!toDrop.isEmpty()) {
+                SpinalInjectorItem.saveIntoInstalledStack(toDrop, provider, injectorInv, injectorCounts);
+                SpinalInjectorItem.dropAndClearInstalledStack(sp, provider, toDrop);
+            }
+
+            if (data != null) {
+                for (int i = 0; i < SpinalInjectorItem.SLOT_COUNT; i++) {
+                    data.setSpinalInjectorStack(i, ItemStack.EMPTY);
+                }
+
+                data.setDirty();
+                sp.syncData(ModAttachments.CYBERWARE);
+            }
         }
+
+        super.removed(player);
     }
 
     private boolean isInjectorMenuSlot(int slotId) {

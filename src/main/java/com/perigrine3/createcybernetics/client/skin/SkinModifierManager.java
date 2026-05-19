@@ -1396,7 +1396,7 @@ public class SkinModifierManager {
             state.clearModifiers();
 
             state.addModifier(new SkinModifier(GENOS_WIDE, GENOS_SLIM,
-                    0xFFFFFFFF, false, GENOS_OUTER_HIDE));
+                    0xFFFFFFFF, false, FULL_OUTER_HIDE));
             state.addHighlight(new SkinHighlight(GENOS_HIGHLIGHT, GENOS_HIGHLIGHT,
                     0xFFFFFF, true, false));
 
@@ -1404,7 +1404,7 @@ public class SkinModifierManager {
                 int tint = data.dyeColor(ModItems.SKINUPGRADES_METALPLATING.get(), CyberwareSlot.SKIN);
 
                 state.addModifier(new SkinModifier(GENOS_WIDE_DYED, GENOS_SLIM_DYED,
-                        tint, false, GENOS_OUTER_HIDE));
+                        tint, false, FULL_OUTER_HIDE));
             }
 
             if (data.isDyed(ModItems.BASECYBERWARE_CYBEREYES.get(), CyberwareSlot.EYES)) {

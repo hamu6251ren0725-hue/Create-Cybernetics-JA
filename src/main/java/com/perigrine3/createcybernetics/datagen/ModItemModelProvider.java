@@ -38,6 +38,7 @@ public class ModItemModelProvider extends ItemModelProvider {
         basicItem(ModItems.NEUROPOZYNE_AUTOINJECTOR.get());
 
         basicItem(ModItems.EMPTY_AUTOINJECTOR.get());
+        basicItem(ModItems.INCOMPLETE_EMPTY_AUTOINJECTOR.get());
 
         basicItem(ModItems.COPPER_UPGRADE_TEMPLATE.get());
         basicItem(ModItems.IRON_UPGRADE_TEMPLATE.get());

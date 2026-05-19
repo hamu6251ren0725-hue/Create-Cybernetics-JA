@@ -466,6 +466,26 @@ public class CyberwareAttributeHelper {
 
 
 
+        registerModifier("sculked_strength", new AttributeModifierData(attackDamageAttribute,
+                ResourceLocation.fromNamespaceAndPath(CreateCybernetics.MODID, "sculked_strength"),
+                1, AttributeModifier.Operation.ADD_VALUE));
+        registerModifier("sculked_speed", new AttributeModifierData(speedAttribute,
+                ResourceLocation.fromNamespaceAndPath(CreateCybernetics.MODID, "sculked_speed"),
+                0.01, AttributeModifier.Operation.ADD_VALUE));
+        registerModifier("sculked_size1", new AttributeModifierData(scaleAttribute,
+                ResourceLocation.fromNamespaceAndPath(CreateCybernetics.MODID, "sculked_size1"),
+                0.1, AttributeModifier.Operation.ADD_VALUE));
+        registerModifier("sculked_size2", new AttributeModifierData(scaleAttribute,
+                ResourceLocation.fromNamespaceAndPath(CreateCybernetics.MODID, "sculked_size2"),
+                0.1, AttributeModifier.Operation.ADD_VALUE));
+        registerModifier("sculked_size3", new AttributeModifierData(scaleAttribute,
+                ResourceLocation.fromNamespaceAndPath(CreateCybernetics.MODID, "sculked_size3"),
+                0.1, AttributeModifier.Operation.ADD_VALUE));
+
+
+
+
+
 
 
 // EXOSUITS

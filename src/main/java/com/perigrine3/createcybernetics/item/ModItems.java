@@ -188,6 +188,8 @@ public class ModItems {
 
     public static final DeferredItem<Item> EMPTY_AUTOINJECTOR = ITEMS.register("empty_autoinjector",
             () -> new Item(new Item.Properties().stacksTo(64)));
+    public static final DeferredItem<Item> INCOMPLETE_EMPTY_AUTOINJECTOR = ITEMS.register("incomplete_empty_autoinjector",
+            () -> new Item(new Item.Properties().stacksTo(64)));
 
     public static final DeferredItem<Item> MUSIC_DISC_CYBERPSYCHO = ITEMS.register("music_disc_cyberpsycho",
             () -> new Item(new Item.Properties().stacksTo(1).jukeboxPlayable(ModSounds.CYBERPSYCHO_KEY)));

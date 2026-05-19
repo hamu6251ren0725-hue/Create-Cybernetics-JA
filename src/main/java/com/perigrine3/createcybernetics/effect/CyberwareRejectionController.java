@@ -17,7 +17,7 @@ public final class CyberwareRejectionController {
 
     private static final float THRESHOLD_PERCENT = 0.25f;
     private static final int REFRESH_EVERY_TICKS = 20;
-    private static final int DURATION = 200;
+    private static final int DURATION = 100;
 
     private CyberwareRejectionController() {}
 
