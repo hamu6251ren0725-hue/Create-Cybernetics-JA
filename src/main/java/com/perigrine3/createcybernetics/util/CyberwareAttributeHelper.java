@@ -145,23 +145,14 @@ public class CyberwareAttributeHelper {
                 ResourceLocation.fromNamespaceAndPath(CreateCybernetics.MODID, "fall_bracer_fall_save_2"),
                 11, AttributeModifier.Operation.ADD_VALUE));
 
-        registerModifier("pneumatic_wrist_block1", new AttributeModifierData(blockReachAttribute,
-                ResourceLocation.fromNamespaceAndPath(CreateCybernetics.MODID, "pneumatic_wrist_block_reach1"),
-                1, AttributeModifier.Operation.ADD_VALUE));
-        registerModifier("pneumatic_wrist_entity1", new AttributeModifierData(entityReachAttribute,
-                ResourceLocation.fromNamespaceAndPath(CreateCybernetics.MODID, "pneumatic_wrist_entity_reach1"),
-                1, AttributeModifier.Operation.ADD_VALUE));
-        registerModifier("pneumatic_wrist_knockback1", new AttributeModifierData(attackKnockbackAttribute,
-                ResourceLocation.fromNamespaceAndPath(CreateCybernetics.MODID, "pneumatic_wrist_knockback_bonus1"),
-                1, AttributeModifier.Operation.ADD_VALUE));
-        registerModifier("pneumatic_wrist_block2", new AttributeModifierData(blockReachAttribute,
-                ResourceLocation.fromNamespaceAndPath(CreateCybernetics.MODID, "pneumatic_wrist_block_reach2"),
-                1, AttributeModifier.Operation.ADD_VALUE));
-        registerModifier("pneumatic_wrist_entity2", new AttributeModifierData(entityReachAttribute,
-                ResourceLocation.fromNamespaceAndPath(CreateCybernetics.MODID, "pneumatic_wrist_entity_reach2"),
-                1, AttributeModifier.Operation.ADD_VALUE));
-        registerModifier("pneumatic_wrist_knockback2", new AttributeModifierData(attackKnockbackAttribute,
-                ResourceLocation.fromNamespaceAndPath(CreateCybernetics.MODID, "pneumatic_wrist_knockback_bonus2"),
+        registerModifier("pneumatic_wrist_block", new AttributeModifierData(blockReachAttribute,
+                ResourceLocation.fromNamespaceAndPath(CreateCybernetics.MODID, "pneumatic_wrist_block_reach"),
+                2, AttributeModifier.Operation.ADD_VALUE));
+        registerModifier("pneumatic_wrist_entity", new AttributeModifierData(entityReachAttribute,
+                ResourceLocation.fromNamespaceAndPath(CreateCybernetics.MODID, "pneumatic_wrist_entity_reach"),
+                2, AttributeModifier.Operation.ADD_VALUE));
+        registerModifier("pneumatic_wrist_knockback", new AttributeModifierData(attackKnockbackAttribute,
+                ResourceLocation.fromNamespaceAndPath(CreateCybernetics.MODID, "pneumatic_wrist_knockback_bonus"),
                 1, AttributeModifier.Operation.ADD_VALUE));
 
         registerModifier("oxygen_tank_oxygen", new AttributeModifierData(oxygenBonusAttribute,
@@ -260,12 +251,30 @@ public class CyberwareAttributeHelper {
                 ResourceLocation.fromNamespaceAndPath(CreateCybernetics.MODID, "cyberbrain_insomnia"),
                 3, AttributeModifier.Operation.ADD_VALUE));
 
+        registerModifier("neuralprocessor_learn", new AttributeModifierData(xpMultiplierAttribute,
+                ResourceLocation.fromNamespaceAndPath(CreateCybernetics.MODID, "neuralprocessor_learn"),
+                1, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
+        registerModifier("neuralprocessor_insomnia", new AttributeModifierData(insomniaAttribute,
+                ResourceLocation.fromNamespaceAndPath(CreateCybernetics.MODID, "neuralprocessor_insomnia"),
+                2, AttributeModifier.Operation.ADD_VALUE));
+        registerModifier("neuralprocessor_speed", new AttributeModifierData(attackSpeedAttribute,
+                ResourceLocation.fromNamespaceAndPath(CreateCybernetics.MODID, "neuralprocessor_speed"),
+                1, AttributeModifier.Operation.ADD_VALUE));
+
         registerModifier("dragonskin_armor", new AttributeModifierData(armorAttribute,
                 ResourceLocation.fromNamespaceAndPath(CreateCybernetics.MODID, "dragonskin_armor"),
                 5, AttributeModifier.Operation.ADD_VALUE));
         registerModifier("dragonskin_toughness", new AttributeModifierData(armorToughnessAttribute,
                 ResourceLocation.fromNamespaceAndPath(CreateCybernetics.MODID, "dragonskin_toughness"),
                 5, AttributeModifier.Operation.ADD_VALUE));
+
+        registerModifier("ripperclaw_damage", new AttributeModifierData(attackDamageAttribute,
+                ResourceLocation.fromNamespaceAndPath(CreateCybernetics.MODID, "ripperclaw_damage"),
+                2, AttributeModifier.Operation.ADD_VALUE));
+
+        registerModifier("gooeymuscle_fall", new AttributeModifierData(safeFallDistanceAttribute,
+                ResourceLocation.fromNamespaceAndPath(CreateCybernetics.MODID, "gooeymuscle_fall"),
+                7, AttributeModifier.Operation.ADD_VALUE));
 
 
 
@@ -342,6 +351,10 @@ public class CyberwareAttributeHelper {
 
 
 
+
+
+
+// FBCs
         registerModifier("gemini_attackstrength", new AttributeModifierData(attackDamageAttribute,
                 ResourceLocation.fromNamespaceAndPath(CreateCybernetics.MODID, "gemini_attackstrength_add"),
                 1, AttributeModifier.Operation.ADD_VALUE));
@@ -442,6 +455,78 @@ public class CyberwareAttributeHelper {
                 ResourceLocation.fromNamespaceAndPath(CreateCybernetics.MODID, "genos_strength_add"),
                 4, AttributeModifier.Operation.ADD_VALUE));
 
+        registerModifier("kildare_strength", new AttributeModifierData(attackDamageAttribute,
+                ResourceLocation.fromNamespaceAndPath(CreateCybernetics.MODID, "kildare_strength_add"),
+                1, AttributeModifier.Operation.ADD_VALUE));
+        registerModifier("kildare_speed", new AttributeModifierData(speedAttribute,
+                ResourceLocation.fromNamespaceAndPath(CreateCybernetics.MODID, "kildare_speed_add"),
+                0.01, AttributeModifier.Operation.ADD_VALUE));
+
+
+
+
+
+        registerModifier("sculked_strength", new AttributeModifierData(attackDamageAttribute,
+                ResourceLocation.fromNamespaceAndPath(CreateCybernetics.MODID, "sculked_strength"),
+                1, AttributeModifier.Operation.ADD_VALUE));
+        registerModifier("sculked_speed", new AttributeModifierData(speedAttribute,
+                ResourceLocation.fromNamespaceAndPath(CreateCybernetics.MODID, "sculked_speed"),
+                0.01, AttributeModifier.Operation.ADD_VALUE));
+        registerModifier("sculked_size1", new AttributeModifierData(scaleAttribute,
+                ResourceLocation.fromNamespaceAndPath(CreateCybernetics.MODID, "sculked_size1"),
+                0.1, AttributeModifier.Operation.ADD_VALUE));
+        registerModifier("sculked_size2", new AttributeModifierData(scaleAttribute,
+                ResourceLocation.fromNamespaceAndPath(CreateCybernetics.MODID, "sculked_size2"),
+                0.1, AttributeModifier.Operation.ADD_VALUE));
+        registerModifier("sculked_size3", new AttributeModifierData(scaleAttribute,
+                ResourceLocation.fromNamespaceAndPath(CreateCybernetics.MODID, "sculked_size3"),
+                0.1, AttributeModifier.Operation.ADD_VALUE));
+
+
+
+
+
+
+
+// EXOSUITS
+        registerModifier("exosuit_strength", new AttributeModifierData(attackDamageAttribute,
+                ResourceLocation.fromNamespaceAndPath(CreateCybernetics.MODID, "exosuit_strength_add"),
+                1.5, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
+        registerModifier("exosuit_knockback", new AttributeModifierData(attackKnockbackAttribute,
+                ResourceLocation.fromNamespaceAndPath(CreateCybernetics.MODID, "exosuit_knockback_add"),
+                1, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
+        registerModifier("exosuit_movementspeed", new AttributeModifierData(speedAttribute,
+                ResourceLocation.fromNamespaceAndPath(CreateCybernetics.MODID, "exosuit_movementspeed_add"),
+                0.04, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
+        registerModifier("exosuit_attackspeed", new AttributeModifierData(attackSpeedAttribute,
+                ResourceLocation.fromNamespaceAndPath(CreateCybernetics.MODID, "exosuit_attackspeed_add"),
+                0.25, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
+        registerModifier("exosuit_miningspeed", new AttributeModifierData(miningSpeedAttribute,
+                ResourceLocation.fromNamespaceAndPath(CreateCybernetics.MODID, "exosuit_miningspeed_add"),
+                0.25, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
+        registerModifier("exosuit_jumpheight", new AttributeModifierData(jumpStrengthAttribute,
+                ResourceLocation.fromNamespaceAndPath(CreateCybernetics.MODID, "exosuit_jumpheight_add"),
+                0.5, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
+
+        registerModifier("exosuit_no_strength", new AttributeModifierData(attackDamageAttribute,
+                ResourceLocation.fromNamespaceAndPath(CreateCybernetics.MODID, "exosuit_strength_remove"),
+                -1, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
+        registerModifier("exosuit_no_knockback", new AttributeModifierData(attackDamageAttribute,
+                ResourceLocation.fromNamespaceAndPath(CreateCybernetics.MODID, "exosuit_knockback_remove"),
+                -0.5, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
+        registerModifier("exosuit_no_movementspeed", new AttributeModifierData(speedAttribute,
+                ResourceLocation.fromNamespaceAndPath(CreateCybernetics.MODID, "exosuit_movementspeed_remove"),
+                -0.25, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
+        registerModifier("exosuit_no_attackspeed", new AttributeModifierData(attackSpeedAttribute,
+                ResourceLocation.fromNamespaceAndPath(CreateCybernetics.MODID, "exosuit_attackspeed_remove"),
+                -0.5, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
+        registerModifier("exosuit_no_miningspeed", new AttributeModifierData(miningSpeedAttribute,
+                ResourceLocation.fromNamespaceAndPath(CreateCybernetics.MODID, "exosuit_miningspeed_remove"),
+                -0.5, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
+        registerModifier("exosuit_no_jumpheight", new AttributeModifierData(jumpStrengthAttribute,
+                ResourceLocation.fromNamespaceAndPath(CreateCybernetics.MODID, "exosuit_jumpheight_remove"),
+                -0.25, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
+
     }
 
 
@@ -539,5 +624,68 @@ public class CyberwareAttributeHelper {
                     .map(h -> (Holder<Attribute>) h)
                     .orElse(null);
         }
+    }
+
+    public static void setPermanentModifier(
+            LivingEntity entity,
+            Holder<Attribute> attribute,
+            ResourceLocation modifierId,
+            double amount,
+            AttributeModifier.Operation operation
+    ) {
+        if (entity == null || attribute == null || modifierId == null || operation == null) {
+            return;
+        }
+
+        var instance = entity.getAttribute(attribute);
+        if (instance == null) {
+            return;
+        }
+
+        instance.removeModifier(modifierId);
+        instance.addOrReplacePermanentModifier(new AttributeModifier(modifierId, amount, operation));
+    }
+
+    public static void removePermanentModifier(
+            LivingEntity entity,
+            Holder<Attribute> attribute,
+            ResourceLocation modifierId
+    ) {
+        if (entity == null || attribute == null || modifierId == null) {
+            return;
+        }
+
+        var instance = entity.getAttribute(attribute);
+        if (instance == null) {
+            return;
+        }
+
+        instance.removeModifier(modifierId);
+    }
+
+    public static int getIntValue(LivingEntity entity, Holder<Attribute> attribute, int fallback) {
+        if (entity == null || attribute == null) {
+            return fallback;
+        }
+
+        var instance = entity.getAttribute(attribute);
+        if (instance == null) {
+            return fallback;
+        }
+
+        return net.minecraft.util.Mth.floor(instance.getValue());
+    }
+
+    public static void setBaseValue(LivingEntity entity, Holder<Attribute> attribute, double value) {
+        if (entity == null || attribute == null) {
+            return;
+        }
+
+        var instance = entity.getAttribute(attribute);
+        if (instance == null) {
+            return;
+        }
+
+        instance.setBaseValue(value);
     }
 }

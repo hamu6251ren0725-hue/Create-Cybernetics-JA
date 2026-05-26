@@ -185,7 +185,7 @@ public final class PlayerAttachmentManager {
     }
 
     // =========================
-    // GUARDIAN EYE
+    // WARDEN ANTLERS
     // =========================
     private static final ResourceLocation WARDEN_ANTLERS_ITEM_ID =
             ResourceLocation.fromNamespaceAndPath(CreateCybernetics.MODID, "wetware_wardenantlers");
@@ -206,6 +206,81 @@ public final class PlayerAttachmentManager {
     private static Item wardenAntlersItemOrNull() {
         if (!BuiltInRegistries.ITEM.containsKey(WARDEN_ANTLERS_ITEM_ID)) return null;
         Item item = BuiltInRegistries.ITEM.get(WARDEN_ANTLERS_ITEM_ID);
+        return item == null ? null : item;
+    }
+
+    // =========================
+    // NEURAL PROCESSOR PORT
+    // =========================
+    private static final ResourceLocation NEURAL_PROCESSOR_ITEM_ID =
+            ResourceLocation.fromNamespaceAndPath(CreateCybernetics.MODID, "brainupgrades_neuralprocessor");
+
+    public static final ResourceLocation NEURAL_PROCESSOR_TEXTURE =
+            ResourceLocation.fromNamespaceAndPath(CreateCybernetics.MODID, "textures/entity/neural_processor_port.png");
+
+    private static NeuralProcessorAttachmentModel NEURAL_PROCESSOR_MODEL;
+
+    public static NeuralProcessorAttachmentModel neuralProcessorModel() {
+        if (NEURAL_PROCESSOR_MODEL == null) {
+            var baked = Minecraft.getInstance().getEntityModels().bakeLayer(NeuralProcessorAttachmentModel.LAYER);
+            NEURAL_PROCESSOR_MODEL = new NeuralProcessorAttachmentModel(baked);
+        }
+        return NEURAL_PROCESSOR_MODEL;
+    }
+
+    private static Item neuralProcessorItemOrNull() {
+        if (!BuiltInRegistries.ITEM.containsKey(NEURAL_PROCESSOR_ITEM_ID)) return null;
+        Item item = BuiltInRegistries.ITEM.get(NEURAL_PROCESSOR_ITEM_ID);
+        return item == null ? null : item;
+    }
+
+    // =========================
+    // RIPPER CLAW
+    // =========================
+    private static final ResourceLocation RIPPER_CLAW_ITEM_ID =
+            ResourceLocation.fromNamespaceAndPath(CreateCybernetics.MODID, "armupgrades_ripperclaw");
+
+    public static final ResourceLocation RIPPER_CLAW_TEXTURE =
+            ResourceLocation.fromNamespaceAndPath(CreateCybernetics.MODID, "textures/entity/ripper_claw.png");
+
+    private static RipperClawAttachmentModel RIPPER_CLAW_MODEL;
+
+    public static RipperClawAttachmentModel ripperClawModel() {
+        if (RIPPER_CLAW_MODEL == null) {
+            var baked = Minecraft.getInstance().getEntityModels().bakeLayer(RipperClawAttachmentModel.LAYER);
+            RIPPER_CLAW_MODEL = new RipperClawAttachmentModel(baked);
+        }
+        return RIPPER_CLAW_MODEL;
+    }
+
+    private static Item ripperClawItemOrNull() {
+        if (!BuiltInRegistries.ITEM.containsKey(RIPPER_CLAW_ITEM_ID)) return null;
+        Item item = BuiltInRegistries.ITEM.get(RIPPER_CLAW_ITEM_ID);
+        return item == null ? null : item;
+    }
+
+    // =========================
+    // ARC CANNON PRONGS
+    // =========================
+    private static final ResourceLocation ARC_CANNON_ITEM_ID =
+            ResourceLocation.fromNamespaceAndPath(CreateCybernetics.MODID, "armupgrades_arccannon");
+
+    public static final ResourceLocation ARC_CANNON_TEXTURE =
+            ResourceLocation.fromNamespaceAndPath(CreateCybernetics.MODID, "textures/entity/arc_cannon_prongs.png");
+
+    private static ArcCannonProngsAttachmentModel ARC_CANNON_PRONGS_MODEL;
+
+    public static ArcCannonProngsAttachmentModel arcCannonProngsModel() {
+        if (ARC_CANNON_PRONGS_MODEL == null) {
+            var baked = Minecraft.getInstance().getEntityModels().bakeLayer(ArcCannonProngsAttachmentModel.LAYER);
+            ARC_CANNON_PRONGS_MODEL = new ArcCannonProngsAttachmentModel(baked);
+        }
+        return ARC_CANNON_PRONGS_MODEL;
+    }
+
+    private static Item arcCannonItemOrNull() {
+        if (!BuiltInRegistries.ITEM.containsKey(ARC_CANNON_ITEM_ID)) return null;
+        Item item = BuiltInRegistries.ITEM.get(ARC_CANNON_ITEM_ID);
         return item == null ? null : item;
     }
 
@@ -233,8 +308,12 @@ public final class PlayerAttachmentManager {
         Item spurItem = spurItemOrNull();
         Item guardianEyeItem = guardianEyeItemOrNull();
         Item wardenAntlersItem = wardenAntlersItemOrNull();
+        Item neuralProcessorItem = neuralProcessorItemOrNull();
+        Item ripperClawItem = ripperClawItemOrNull();
+        Item arcCannonItem = arcCannonItemOrNull();
 
-        if (clawsItem == null && drillItem == null && pawsItem == null && calfPropellerItem == null && spurItem == null && guardianEyeItem == null && wardenAntlersItem == null) return state;
+        if (clawsItem == null && drillItem == null && ripperClawItem == null && pawsItem == null && calfPropellerItem == null
+                && spurItem == null && guardianEyeItem == null && wardenAntlersItem == null && arcCannonItem == null) return state;
 
         for (var entry : data.getAll().entrySet()) {
             CyberwareSlot slot = entry.getKey();
@@ -247,8 +326,16 @@ public final class PlayerAttachmentManager {
                 if (cw == null) continue;
                 ItemStack stack = cw.getItem();
                 if (stack == null || stack.isEmpty()) continue;
-                if (!data.isEnabled(slot, idx)) continue;
 
+
+
+                if (arcCannonItem != null && stack.is(arcCannonItem)) {
+                    state.add(new ArcCannonAttachment(anchor));
+                }
+
+
+
+            if (!data.isEnabled(slot, idx)) continue;
 
                 if (clawsItem != null && stack.is(clawsItem)) {
                     state.add(new ClawAttachment(anchor));
@@ -280,6 +367,14 @@ public final class PlayerAttachmentManager {
                 if (wardenAntlersItem != null && stack.is(wardenAntlersItem)) {
                     state.add(new WardenAntlersAttachment(anchor));
                 }
+
+                if (neuralProcessorItem != null && stack.is(neuralProcessorItem)) {
+                    state.add(new NeuralProcessorAttachment(anchor));
+                }
+
+                if (ripperClawItem != null && stack.is(ripperClawItem)) {
+                    state.add(new RipperClawAttachment(anchor));
+                }
             }
         }
 
@@ -291,7 +386,11 @@ public final class PlayerAttachmentManager {
         if (slot == CyberwareSlot.RARM) return AttachmentAnchor.RIGHT_ARM;
         if (slot == CyberwareSlot.LLEG) return AttachmentAnchor.LEFT_LEG;
         if (slot == CyberwareSlot.RLEG) return AttachmentAnchor.RIGHT_LEG;
+        if (slot == CyberwareSlot.ORGANS) return AttachmentAnchor.BODY;
+        if (slot == CyberwareSlot.HEART) return AttachmentAnchor.BODY;
+        if (slot == CyberwareSlot.LUNGS) return AttachmentAnchor.BODY;
         if (slot == CyberwareSlot.EYES) return AttachmentAnchor.HEAD;
+        if (slot == CyberwareSlot.BRAIN) return AttachmentAnchor.HEAD;
         return null;
     }
 
@@ -397,6 +496,46 @@ public final class PlayerAttachmentManager {
 
         pose.scale(1, 1, 1);
     }
+
+    public static void applyNeuralProcessorTransform(PoseStack pose, AttachmentAnchor headAnchor) {
+        pose.translate(0.0F, 0.0F, 0.0F);
+        pose.mulPose(Axis.XN.rotationDegrees(0.0F));
+        pose.mulPose(Axis.YP.rotationDegrees(0.0F));
+
+        pose.scale(1, 1, 1);
+    }
+
+    public static void applyRipperClawTransform(PoseStack pose, AttachmentAnchor armAnchor) {
+        pose.translate(0.0F, -0.1F, 0.0F);
+        pose.scale(1F, 1F, 1F);
+
+        if (armAnchor == AttachmentAnchor.LEFT_ARM) {
+            pose.translate(-0.3F, 0.0F, 0.0F);
+            pose.mulPose(Axis.ZP.rotationDegrees(0.0F));
+            pose.scale(-1.0F, 1.0F, 1.0F);
+        } else if (armAnchor == AttachmentAnchor.RIGHT_ARM) {
+            pose.translate(0.3F, 0.0F, 0.0F);
+            pose.mulPose(Axis.ZP.rotationDegrees(0.0F));
+        }
+
+        pose.scale(1F, 1F, 1F);
+    }
+
+    public static void applyArcCannonProngsTransform(PoseStack pose, AttachmentAnchor armAnchor) {
+        pose.translate(0.0F, -0.1F, 0.0F);
+
+        if (armAnchor == AttachmentAnchor.LEFT_ARM) {
+            pose.translate(-0.3F, 0.0F, 0.0F);
+            pose.mulPose(Axis.YP.rotationDegrees(180.0F));
+        } else if (armAnchor == AttachmentAnchor.RIGHT_ARM) {
+            pose.translate(0.3F, 0.0F, 0.0F);
+        }
+
+        pose.scale(1.0F, 1.0F, 1.0F);
+    }
+
+
+
 
     // =========================
     // ATTACHMENTS
@@ -699,6 +838,120 @@ public final class PlayerAttachmentManager {
         @Override
         public void setupPose(PoseStack poseStack, AbstractClientPlayer player, PlayerModel<AbstractClientPlayer> parentModel, PlayerSkin.Model modelType, float partialTick) {
             applyWardenAntlersTransform(poseStack, anchor);
+        }
+    }
+
+    private static final class NeuralProcessorAttachment implements PlayerAttachment {
+        private final AttachmentAnchor anchor;
+
+        private NeuralProcessorAttachment(AttachmentAnchor anchor) {
+            this.anchor = anchor;
+        }
+
+        @Override
+        public AttachmentAnchor anchor() {
+            return anchor;
+        }
+
+        @Override
+        public ResourceLocation texture(PlayerSkin.Model modelType) {
+            return NEURAL_PROCESSOR_TEXTURE;
+        }
+
+        @Override
+        public Model model(PlayerSkin.Model modelType) {
+            return neuralProcessorModel();
+        }
+
+        @Override
+        public int color() {
+            return 0xFFFFFFFF;
+        }
+
+        @Override
+        public boolean thirdPersonOnly() {
+            return true;
+        }
+
+        @Override
+        public void setupPose(PoseStack poseStack, AbstractClientPlayer player, PlayerModel<AbstractClientPlayer> parentModel, PlayerSkin.Model modelType, float partialTick) {
+            applyNeuralProcessorTransform(poseStack, anchor);
+        }
+    }
+
+    private static final class RipperClawAttachment implements PlayerAttachment {
+        private final AttachmentAnchor anchor;
+
+        private RipperClawAttachment(AttachmentAnchor anchor) {
+            this.anchor = anchor;
+        }
+
+        @Override
+        public AttachmentAnchor anchor() {
+            return anchor;
+        }
+
+        @Override
+        public ResourceLocation texture(PlayerSkin.Model modelType) {
+            return RIPPER_CLAW_TEXTURE;
+        }
+
+        @Override
+        public Model model(PlayerSkin.Model modelType) {
+            return ripperClawModel();
+        }
+
+        @Override
+        public int color() {
+            return 0xFFFFFFFF;
+        }
+
+        @Override
+        public boolean thirdPersonOnly() {
+            return false;
+        }
+
+        @Override
+        public void setupPose(PoseStack poseStack, AbstractClientPlayer player, PlayerModel<AbstractClientPlayer> parentModel, PlayerSkin.Model modelType, float partialTick) {
+            applyRipperClawTransform(poseStack, anchor);
+        }
+    }
+
+    private static final class ArcCannonAttachment implements PlayerAttachment {
+        private final AttachmentAnchor anchor;
+
+        private ArcCannonAttachment(AttachmentAnchor anchor) {
+            this.anchor = anchor;
+        }
+
+        @Override
+        public AttachmentAnchor anchor() {
+            return anchor;
+        }
+
+        @Override
+        public ResourceLocation texture(PlayerSkin.Model modelType) {
+            return ARC_CANNON_TEXTURE;
+        }
+
+        @Override
+        public Model model(PlayerSkin.Model modelType) {
+            return arcCannonProngsModel();
+        }
+
+        @Override
+        public int color() {
+            return 0xFFFFFFFF;
+        }
+
+        @Override
+        public boolean thirdPersonOnly() {
+            return false;
+        }
+
+        @Override
+        public void setupPose(PoseStack poseStack, AbstractClientPlayer player, PlayerModel<AbstractClientPlayer> parentModel, PlayerSkin.Model modelType, float partialTick) {
+            applyArcCannonProngsTransform(poseStack, anchor);
         }
     }
 }

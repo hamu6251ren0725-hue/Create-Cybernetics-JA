@@ -61,6 +61,8 @@ public final class MissingOrganController {
 
         if (player.getPersistentData().getBoolean(HOLO_SNAPSHOT_FLAG)) return;
 
+        ensureFakePlayerDefaultOrgans(player);
+
         PlayerCyberwareData data = player.getData(ModAttachments.CYBERWARE);
         if (data == null) return;
 
@@ -108,8 +110,7 @@ public final class MissingOrganController {
 
         /* -------------------- EYES -------------------- */
         if (!hasEyes) {
-            refreshEffect(player, MobEffects.BLINDNESS, 40, 1);
-            refreshEffect(player, MobEffects.DARKNESS, 40, 0);
+
         }
 
 
@@ -120,33 +121,42 @@ public final class MissingOrganController {
 
         /* -------------------- LUNGS -------------------- */
         boolean hasGills = data.hasSpecificItem(ModItems.WETWARE_WATERBREATHINGLUNGS.get(), CyberwareSlot.LUNGS);
+        boolean underWater = player.isUnderWater();
         boolean inWater = player.isUnderWater() || player.isInWaterOrRain();
 
-        if (!hasLungs) {
-            boolean canBreatheHere = hasGills && inWater;
+// Cases:
+// 1) Normal lungs present -> let vanilla handle air entirely.
+//    This preserves Respiration, Water Breathing, and your oxygen tank refund logic.
+// 2) No lungs, but gills in water -> breathe in water.
+// 3) No lungs, but gills out of water -> suffocate.
+// 4) No lungs and no gills -> suffocate.
+// 5) Both lungs and gills -> breathe anywhere; do not touch vanilla air tracking.
 
-            if (canBreatheHere) {
-                player.getPersistentData().remove(NO_LUNGS_AIR);
+        boolean breatheFreely = hasLungs || (hasGills && inWater);
+        boolean needsCustomSuffocation = !hasLungs && !(hasGills && inWater);
+
+        if (breatheFreely && !needsCustomSuffocation) {
+            player.getPersistentData().remove(NO_LUNGS_AIR);
+
+            if (!hasLungs && hasGills) {
                 player.setAirSupply(player.getMaxAirSupply());
-            } else {
-                CompoundTag pd = player.getPersistentData();
-
-                int air = pd.contains(NO_LUNGS_AIR, Tag.TAG_INT)
-                        ? pd.getInt(NO_LUNGS_AIR)
-                        : player.getAirSupply();
-
-                air -= 1;
-
-                if (air <= -20) {
-                    player.hurt(ModDamageSources.missingLungs(player.level(), player, null), 2);
-                    air = 0;
-                }
-
-                pd.putInt(NO_LUNGS_AIR, air);
-                player.setAirSupply(air);
             }
         } else {
-            player.getPersistentData().remove(NO_LUNGS_AIR);
+            CompoundTag pd = player.getPersistentData();
+
+            int air = pd.contains(NO_LUNGS_AIR, Tag.TAG_INT)
+                    ? pd.getInt(NO_LUNGS_AIR)
+                    : player.getAirSupply();
+
+            air -= 1;
+
+            if (air <= -20) {
+                player.hurt(ModDamageSources.missingLungs(player.level(), player, null), 2);
+                air = 0;
+            }
+
+            pd.putInt(NO_LUNGS_AIR, air);
+            player.setAirSupply(air);
         }
 
         /* -------------------- LIVER -------------------- */
@@ -237,14 +247,6 @@ public final class MissingOrganController {
         } catch (Throwable ignored) {}
     }
 
-    private static void refreshEffect(Player player, Holder<MobEffect> effect, int durationTicks, int amplifier) {
-        MobEffectInstance cur = player.getEffect(effect);
-
-        if (cur == null || cur.getDuration() < 40 || cur.getAmplifier() != amplifier) {
-            player.addEffect(new MobEffectInstance(effect, durationTicks, amplifier, true, false, false));
-        }
-    }
-
     private static void clearProneLike(Player player) {
         CompoundTag pd = player.getPersistentData();
         if (!pd.getBoolean(FORCED_PRONE)) return;
@@ -257,6 +259,8 @@ public final class MissingOrganController {
     public static void onBreakSpeed(PlayerEvent.BreakSpeed event) {
         Player player = event.getEntity();
         if (player.level().isClientSide) return;
+
+        ensureFakePlayerDefaultOrgans(player);
 
         PlayerCyberwareData data = player.getData(ModAttachments.CYBERWARE);
         if (data == null) return;
@@ -288,6 +292,8 @@ public final class MissingOrganController {
     public static void onItemUse(LivingEntityUseItemEvent.Start event) {
         if (!(event.getEntity() instanceof Player player)) return;
 
+        ensureFakePlayerDefaultOrgans(player);
+
         PlayerCyberwareData data = player.getData(ModAttachments.CYBERWARE);
         if (data == null) return;
 
@@ -301,6 +307,8 @@ public final class MissingOrganController {
     public static void onAttack(AttackEntityEvent event) {
         Player player = event.getEntity();
         if (player.level().isClientSide) return;
+
+        ensureFakePlayerDefaultOrgans(player);
 
         PlayerCyberwareData data = player.getData(ModAttachments.CYBERWARE);
         if (data == null) return;
@@ -397,6 +405,8 @@ public final class MissingOrganController {
         Player player = event.getEntity();
         if (player.level().isClientSide) return;
 
+        ensureFakePlayerDefaultOrgans(player);
+
         PlayerCyberwareData data = player.getData(ModAttachments.CYBERWARE);
         if (data == null) return;
 
@@ -419,6 +429,8 @@ public final class MissingOrganController {
         Player player = event.getEntity();
         if (player.level().isClientSide) return;
 
+        ensureFakePlayerDefaultOrgans(player);
+
         PlayerCyberwareData data = player.getData(ModAttachments.CYBERWARE);
         if (data == null) return;
 
@@ -434,5 +446,41 @@ public final class MissingOrganController {
         if (!handWorks(player, event.getHand(), hasLeftArm, hasRightArm)) {
             event.setCanceled(true);
         }
+    }
+
+    private static boolean ensureFakePlayerDefaultOrgans(Player player) {
+        if (!(player instanceof FakePlayer)) {
+            return false;
+        }
+
+        PlayerCyberwareData data = player.getData(ModAttachments.CYBERWARE);
+        if (data == null) {
+            return true;
+        }
+
+        if (!hasCompleteDefaultOrganBaseline(data)) {
+            data.resetToDefaultOrgans();
+            data.setDirty();
+            player.syncData(ModAttachments.CYBERWARE);
+        }
+
+        player.getPersistentData().putBoolean(DEFAULTS_PATCHED, true);
+        return true;
+    }
+
+    private static boolean hasCompleteDefaultOrganBaseline(PlayerCyberwareData data) {
+        return hasAnyTagged(data, ModTags.Items.BRAIN_ITEMS, CyberwareSlot.BRAIN)
+                && hasAnyTagged(data, ModTags.Items.EYE_ITEMS, CyberwareSlot.EYES)
+                && hasAnyTagged(data, ModTags.Items.HEART_ITEMS, CyberwareSlot.HEART)
+                && hasAnyTagged(data, ModTags.Items.LUNGS_ITEMS, CyberwareSlot.LUNGS)
+                && hasAnyTagged(data, ModTags.Items.LIVER_ITEMS, CyberwareSlot.ORGANS)
+                && hasAnyTagged(data, ModTags.Items.INTESTINES_ITEMS, CyberwareSlot.ORGANS)
+                && hasAnyTagged(data, ModTags.Items.BONE_ITEMS, CyberwareSlot.BONE)
+                && hasAnyTagged(data, ModTags.Items.MUSCLE_ITEMS, CyberwareSlot.MUSCLE)
+                && hasAnyTagged(data, ModTags.Items.SKIN_ITEMS, CyberwareSlot.SKIN)
+                && hasAnyTagged(data, ModTags.Items.LEFTARM_ITEMS, CyberwareSlot.LARM)
+                && hasAnyTagged(data, ModTags.Items.RIGHTARM_ITEMS, CyberwareSlot.RARM)
+                && hasAnyTagged(data, ModTags.Items.LEFTLEG_ITEMS, CyberwareSlot.LLEG)
+                && hasAnyTagged(data, ModTags.Items.RIGHTLEG_ITEMS, CyberwareSlot.RLEG);
     }
 }

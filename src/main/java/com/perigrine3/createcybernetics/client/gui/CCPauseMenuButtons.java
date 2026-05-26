@@ -3,7 +3,7 @@ package com.perigrine3.createcybernetics.client.gui;
 import com.perigrine3.createcybernetics.CreateCybernetics;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.screens.PauseScreen;
+import net.minecraft.client.gui.screens.options.OptionsScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.neoforged.api.distmarker.Dist;
@@ -19,52 +19,58 @@ public final class CCPauseMenuButtons {
     private static final int ICON_W = 20;
     private static final int GAP_PX = 4;
 
-    private static final String KEY_OPTIONS = "menu.options";
-    private static final String KEY_MODS_FML = "fml.menu.mods";
-    private static final String KEY_MODS_NEOFORGE = "neoforge.menu.mods";
+    private static final String KEY_SKIN_CUSTOMIZATION = "options.skinCustomisation";
+    private static final String KEY_VIDEO_SETTINGS = "options.video";
+
     private static final String CC_MARKER_ID = "createcybernetics_pause_buttons";
 
     private CCPauseMenuButtons() {}
 
     @SubscribeEvent
     public static void onScreenInitPost(ScreenEvent.Init.Post event) {
-        if (!(event.getScreen() instanceof PauseScreen pause)) return;
+        if (!(event.getScreen() instanceof OptionsScreen options)) return;
         if (alreadyHasOurButtons(event)) return;
 
-        AbstractWidget optionsBtn = findButtonByTranslatableKey(event, KEY_OPTIONS);
-        AbstractWidget modsBtn = findButtonByTranslatableKey(event, KEY_MODS_FML);
-        if (modsBtn == null) modsBtn = findButtonByTranslatableKey(event, KEY_MODS_NEOFORGE);
-        if (modsBtn == null) modsBtn = findButtonByTextFallback(event, "mods");
+        AbstractWidget skinBtn = findButtonByTranslatableKey(event, KEY_SKIN_CUSTOMIZATION);
+        if (skinBtn == null) skinBtn = findButtonByTextFallback(event, "skin");
 
-        if (optionsBtn != null) {
-            int x = optionsBtn.getX() - (ICON_W + GAP_PX);
-            int y = optionsBtn.getY();
+        AbstractWidget videoBtn = findButtonByTranslatableKey(event, KEY_VIDEO_SETTINGS);
+        if (videoBtn == null) videoBtn = findButtonByTextFallback(event, "video");
 
-            CCIconButton hudBtn = new CCIconButton(
-                    x, y, ICON_W, optionsBtn.getHeight(),
-                    CCIconButton.Icon.HUD_LAYOUT,
-                    Component.translatable("gui.createcybernetics.pause.hud_layout"),
-                    CC_MARKER_ID,
-                    () -> openHudLayout(pause)
-            );
-
-            event.addListener(hudBtn);
-        }
-
-        if (modsBtn != null) {
-            int x = modsBtn.getX() - (ICON_W + GAP_PX);
-            int y = modsBtn.getY();
+        if (skinBtn != null) {
+            int x = skinBtn.getX() - (ICON_W + GAP_PX);
+            int y = skinBtn.getY();
 
             CCIconButton eyeBtn = new CCIconButton(
-                    x, y, ICON_W, modsBtn.getHeight(),
+                    x, y, ICON_W, skinBtn.getHeight(),
                     CCIconButton.Icon.CYBEREYE_SKIN,
                     Component.translatable("gui.createcybernetics.pause.cybereye_skin"),
                     CC_MARKER_ID,
-                    () -> openCybereyeSkin(pause)
+                    () -> openCybereyeSkin(options)
             );
 
             event.addListener(eyeBtn);
         }
+
+        if (isInWorld() && videoBtn != null) {
+            int x = videoBtn.getX() - (ICON_W + GAP_PX);
+            int y = videoBtn.getY();
+
+            CCIconButton hudBtn = new CCIconButton(
+                    x, y, ICON_W, videoBtn.getHeight(),
+                    CCIconButton.Icon.HUD_LAYOUT,
+                    Component.translatable("gui.createcybernetics.pause.hud_layout"),
+                    CC_MARKER_ID,
+                    () -> openHudLayout(options)
+            );
+
+            event.addListener(hudBtn);
+        }
+    }
+
+    private static boolean isInWorld() {
+        Minecraft mc = Minecraft.getInstance();
+        return mc.level != null && mc.player != null;
     }
 
     private static boolean alreadyHasOurButtons(ScreenEvent.Init.Post event) {
@@ -78,15 +84,16 @@ public final class CCPauseMenuButtons {
         return false;
     }
 
-    private static void openHudLayout(PauseScreen parent) {
+    private static void openHudLayout(OptionsScreen parent) {
         Minecraft mc = Minecraft.getInstance();
-        if (mc == null) return;
+        if (mc.level == null || mc.player == null) return;
+
         mc.setScreen(new HudLayoutScreen(parent));
     }
 
-    private static void openCybereyeSkin(PauseScreen parent) {
+    private static void openCybereyeSkin(OptionsScreen parent) {
         Minecraft mc = Minecraft.getInstance();
-        if (mc == null) return;
+
         mc.setScreen(new CybereyeSkinConfigScreen(parent));
     }
 
@@ -97,6 +104,7 @@ public final class CCPauseMenuButtons {
             String k = getTranslatableKey(w.getMessage());
             if (k != null && k.equals(key)) return w;
         }
+
         return null;
     }
 
@@ -104,17 +112,20 @@ public final class CCPauseMenuButtons {
         for (var child : event.getListenersList()) {
             if (!(child instanceof AbstractWidget w)) continue;
 
-            String s = w.getMessage() != null ? w.getMessage().getString() : "";
+            String s = w.getMessage().getString();
             if (s.toLowerCase(Locale.ROOT).contains(needleLower)) return w;
         }
+
         return null;
     }
 
     private static String getTranslatableKey(Component c) {
         if (c == null) return null;
+
         if (c.getContents() instanceof TranslatableContents tc) {
             return tc.getKey();
         }
+
         return null;
     }
 }

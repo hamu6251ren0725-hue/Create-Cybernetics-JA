@@ -7,9 +7,10 @@ import com.perigrine3.createcybernetics.common.capabilities.PlayerCyberwareData;
 import com.perigrine3.createcybernetics.item.ModItems;
 import com.perigrine3.createcybernetics.item.generic.InfologTextData;
 import com.perigrine3.createcybernetics.network.payload.*;
-import com.perigrine3.createcybernetics.screen.custom.ArmCannonWheelScreen;
-import com.perigrine3.createcybernetics.screen.custom.CyberwareToggleWheelScreen;
-import com.perigrine3.createcybernetics.screen.custom.InfologEditScreen;
+import com.perigrine3.createcybernetics.screen.custom.arm_cannon.ArmCannonWheelScreen;
+import com.perigrine3.createcybernetics.screen.custom.cyberdeck.CyberdeckQuickhackWheelScreen;
+import com.perigrine3.createcybernetics.screen.custom.toggle_wheel.CyberwareToggleWheelScreen;
+import com.perigrine3.createcybernetics.screen.custom.chipware.InfologEditScreen;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.ItemStack;
@@ -71,6 +72,20 @@ public final class KeybindClientHandler {
             if (mc.screen != null) continue;
             OpenHeatEnginePayload payload = new OpenHeatEnginePayload();
             PacketDistributor.sendToServer(payload);
+        }
+
+        while (ModKeyMappings.CYBERDECK.get().consumeClick()) {
+            if (mc.screen != null) continue;
+            PacketDistributor.sendToServer(new OpenCyberdeckPayload());
+        }
+
+        while (ModKeyMappings.CYBERDECK_WHEEL.get().consumeClick()) {
+            if (CyberdeckQuickhackWheelScreen.isOpen()) {
+                CyberdeckQuickhackWheelScreen.close();
+                if (mc.screen != null) mc.setScreen(null);
+            } else {
+                mc.setScreen(new CyberdeckQuickhackWheelScreen());
+            }
         }
 
         while (ModKeyMappings.INFOLOG.get().consumeClick()) {

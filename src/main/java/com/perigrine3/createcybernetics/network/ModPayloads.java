@@ -2,6 +2,7 @@ package com.perigrine3.createcybernetics.network;
 
 import com.perigrine3.createcybernetics.api.CyberwareSlot;
 import com.perigrine3.createcybernetics.api.InstalledCyberware;
+import com.perigrine3.createcybernetics.client.render.CyberentitySandevistanMirageTrail;
 import com.perigrine3.createcybernetics.client.render.SandevistanMirageTrail;
 import com.perigrine3.createcybernetics.common.capabilities.ModAttachments;
 import com.perigrine3.createcybernetics.common.capabilities.PlayerCyberwareData;
@@ -12,6 +13,7 @@ import com.perigrine3.createcybernetics.network.payload.*;
 import com.perigrine3.createcybernetics.util.ModTags;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.api.distmarker.Dist;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
@@ -36,16 +38,6 @@ public final class ModPayloads {
                 (payload, ctx) -> ctx.enqueueWork(() -> {
                     if (ctx.player() instanceof net.minecraft.server.level.ServerPlayer sp) {
                         GuardianEyeEffect.setUseHeld(sp, payload.held());
-                    }
-                })
-        );
-
-        r.playToServer(
-                AerostasisGyrobladderEffect.GyroJumpHeldPayload.TYPE,
-                AerostasisGyrobladderEffect.GyroJumpHeldPayload.STREAM_CODEC,
-                (payload, ctx) -> ctx.enqueueWork(() -> {
-                    if (ctx.player() instanceof net.minecraft.server.level.ServerPlayer sp) {
-                        AerostasisGyrobladderEffect.handleJumpHeldPayload(sp, payload.held());
                     }
                 })
         );
@@ -166,6 +158,12 @@ public final class ModPayloads {
                 })
         );
 
+        r.playToServer(
+                OpenCyberdeckPayload.TYPE,
+                OpenCyberdeckPayload.STREAM_CODEC,
+                OpenCyberdeckPayloadHandler::handle
+        );
+
         r.playToClient(
                 SandevistanSnapshotPayload.TYPE,
                 SandevistanSnapshotPayload.STREAM_CODEC,
@@ -200,6 +198,42 @@ public final class ModPayloads {
                 EnergyHudSyncPayload::handle
         );
 
+        r.playToServer(
+                CastCyberdeckQuickhackPayload.TYPE,
+                CastCyberdeckQuickhackPayload.STREAM_CODEC,
+                CastCyberdeckQuickhackHandler::handle
+        );
+
+        r.playToClient(
+                BehindYouSoundPayload.TYPE,
+                BehindYouSoundPayload.STREAM_CODEC,
+                (payload, ctx) -> ctx.enqueueWork(() -> BehindYouSoundPayload.handle(payload))
+        );
+
+        r.playToServer(
+                com.perigrine3.createcybernetics.compat.corpse.OpenCorpseCyberwarePayload.TYPE,
+                com.perigrine3.createcybernetics.compat.corpse.OpenCorpseCyberwarePayload.STREAM_CODEC,
+                com.perigrine3.createcybernetics.compat.corpse.OpenCorpseCyberwarePayload::handle
+        );
+
+        r.playToClient(
+                com.perigrine3.createcybernetics.compat.corpse.CorpseVisualSnapshotPayload.TYPE,
+                com.perigrine3.createcybernetics.compat.corpse.CorpseVisualSnapshotPayload.STREAM_CODEC,
+                com.perigrine3.createcybernetics.compat.corpse.CorpseVisualSnapshotPayload::handle
+        );
+
+        r.playToServer(
+                com.perigrine3.createcybernetics.compat.corpse.RequestCorpseVisualSnapshotPayload.TYPE,
+                com.perigrine3.createcybernetics.compat.corpse.RequestCorpseVisualSnapshotPayload.STREAM_CODEC,
+                com.perigrine3.createcybernetics.compat.corpse.RequestCorpseVisualSnapshotPayload::handle
+        );
+
+        r.playToServer(
+                ArcCannonFirePayload.TYPE,
+                ArcCannonFirePayload.STREAM_CODEC,
+                ArcCannonFirePayload::handle
+        );
+
         // ---------------- CYBEREYE IRIS LAYOUT SYNC ----------------
 
 // Client -> Server
@@ -218,6 +252,72 @@ public final class ModPayloads {
                 CybereyeIrisSyncS2CPayload.TYPE,
                 CybereyeIrisSyncS2CPayload.STREAM_CODEC,
                 (payload, ctx) -> ctx.enqueueWork(() -> CybereyeIrisSyncS2CPayload.handle(payload))
+        );
+
+        r.playToServer(
+                TattooUploadC2SPayload.TYPE,
+                TattooUploadC2SPayload.STREAM_CODEC,
+                TattooUploadC2SPayload::handle
+        );
+
+        r.playToClient(
+                TattooListS2CPayload.TYPE,
+                TattooListS2CPayload.STREAM_CODEC,
+                TattooListS2CPayload::handle
+        );
+
+        r.playToServer(
+                TattooImageRequestC2SPayload.TYPE,
+                TattooImageRequestC2SPayload.STREAM_CODEC,
+                TattooImageRequestC2SPayload::handle
+        );
+
+        r.playToClient(
+                TattooImageDataS2CPayload.TYPE,
+                TattooImageDataS2CPayload.STREAM_CODEC,
+                TattooImageDataS2CPayload::handle
+        );
+
+        r.playToServer(
+                TattooApplyC2SPayload.TYPE,
+                TattooApplyC2SPayload.STREAM_CODEC,
+                TattooApplyC2SPayload::handle
+        );
+
+        r.playToClient(
+                TattooAccessSyncS2CPayload.TYPE,
+                TattooAccessSyncS2CPayload.STREAM_CODEC,
+                TattooAccessSyncS2CPayload::handle
+        );
+
+        r.playToServer(
+                TattooApproveC2SPayload.TYPE,
+                TattooApproveC2SPayload.STREAM_CODEC,
+                TattooApproveC2SPayload::handle
+        );
+
+        r.playToClient(
+                TattooPendingListS2CPayload.TYPE,
+                TattooPendingListS2CPayload.STREAM_CODEC,
+                TattooPendingListS2CPayload::handle
+        );
+
+        r.playToServer(
+                TattooPendingListRequestC2SPayload.TYPE,
+                TattooPendingListRequestC2SPayload.STREAM_CODEC,
+                TattooPendingListRequestC2SPayload::handle
+        );
+
+        r.playToServer(
+                TattooRemoveApprovedC2SPayload.TYPE,
+                TattooRemoveApprovedC2SPayload.STREAM_CODEC,
+                TattooRemoveApprovedC2SPayload::handle
+        );
+
+        r.playToServer(
+                TattooRejectC2SPayload.TYPE,
+                TattooRejectC2SPayload.STREAM_CODEC,
+                TattooRejectC2SPayload::handle
         );
 
 
@@ -291,6 +391,42 @@ public final class ModPayloads {
                 CyberwareEnabledStatePayload.TYPE,
                 CyberwareEnabledStatePayload.STREAM_CODEC,
                 (payload, ctx) -> ctx.enqueueWork(() -> CyberwareEnabledStatePayload.handle(payload, ctx))
+        );
+
+        r.playToClient(
+                PlayerSurgeryStartPayload.TYPE,
+                PlayerSurgeryStartPayload.STREAM_CODEC,
+                PlayerSurgeryPayloadHandler::handleStart
+        );
+
+        r.playToClient(
+                PlayerSurgeryRoundPayload.TYPE,
+                PlayerSurgeryRoundPayload.STREAM_CODEC,
+                PlayerSurgeryPayloadHandler::handleRound
+        );
+
+        r.playToServer(
+                PlayerSurgeryClickPayload.TYPE,
+                PlayerSurgeryClickPayload.STREAM_CODEC,
+                PlayerSurgeryPayloadHandler::handleClick
+        );
+
+        r.playToClient(
+                PlayerSurgeryResultPayload.TYPE,
+                PlayerSurgeryResultPayload.STREAM_CODEC,
+                PlayerSurgeryPayloadHandler::handleResult
+        );
+
+        r.playToClient(
+                PlayerSurgeryEndPayload.TYPE,
+                PlayerSurgeryEndPayload.STREAM_CODEC,
+                PlayerSurgeryPayloadHandler::handleEnd
+        );
+
+        r.playToServer(
+                PlayerSurgeryCancelPayload.TYPE,
+                PlayerSurgeryCancelPayload.STREAM_CODEC,
+                PlayerSurgeryPayloadHandler::handleCancel
         );
     }
 }

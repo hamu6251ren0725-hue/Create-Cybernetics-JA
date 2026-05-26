@@ -5,15 +5,18 @@ import com.perigrine3.createcybernetics.block.ModBlocks;
 import com.perigrine3.createcybernetics.block.entity.ModBlockEntities;
 import com.perigrine3.createcybernetics.common.attributes.ModAttributes;
 import com.perigrine3.createcybernetics.common.capabilities.ModAttachments;
+import com.perigrine3.createcybernetics.common.capabilities.ModMobAttachments;
 import com.perigrine3.createcybernetics.compat.CompatBootstrap;
-import com.perigrine3.createcybernetics.compat.ironsspells.IronsSpellbooksCastSuppressCompat;
+import com.perigrine3.createcybernetics.compat.corpse.CorpseCompat;
+import com.perigrine3.createcybernetics.compat.corpse.CorpseCyberwareScreen;
+import com.perigrine3.createcybernetics.compat.corpse.ModCorpseCompatMenus;
 import com.perigrine3.createcybernetics.compat.ironsspells.IronsSpellbooksCyberwareAttributes;
 import com.perigrine3.createcybernetics.component.ModDataComponents;
 import com.perigrine3.createcybernetics.effect.ModEffects;
 import com.perigrine3.createcybernetics.effect.PneumaticCalvesEffect;
 import com.perigrine3.createcybernetics.enchantment.ModEnchantmentEffects;
 import com.perigrine3.createcybernetics.entity.ModEntities;
-import com.perigrine3.createcybernetics.entity.client.*;
+import com.perigrine3.createcybernetics.entity.client.renderers.*;
 import com.perigrine3.createcybernetics.item.ModCreativeModeTabs;
 import com.perigrine3.createcybernetics.item.ModItems;
 import com.perigrine3.createcybernetics.loot.ModLootModifiers;
@@ -21,8 +24,21 @@ import com.perigrine3.createcybernetics.potion.ModPotions;
 import com.perigrine3.createcybernetics.recipe.ModRecipeSerializers;
 import com.perigrine3.createcybernetics.recipe.ModRecipes;
 import com.perigrine3.createcybernetics.screen.ModMenuTypes;
-import com.perigrine3.createcybernetics.screen.custom.*;
+import com.perigrine3.createcybernetics.screen.custom.TattooArtistScreen;
+import com.perigrine3.createcybernetics.screen.custom.arm_cannon.ArmCannonScreen;
+import com.perigrine3.createcybernetics.screen.custom.chipware.ChipwareMiniScreen;
+import com.perigrine3.createcybernetics.screen.custom.crafting.EngineeringTableScreen;
+import com.perigrine3.createcybernetics.screen.custom.crafting.ExpandedInventoryScreen;
+import com.perigrine3.createcybernetics.screen.custom.crafting.GraftingTableScreen;
+import com.perigrine3.createcybernetics.screen.custom.cyberdeck.CyberdeckScreen;
+import com.perigrine3.createcybernetics.screen.custom.heat_engine.HeatEngineScreen;
+import com.perigrine3.createcybernetics.screen.custom.spinal_injector.SpinalInjectorScreen;
+import com.perigrine3.createcybernetics.screen.custom.surgery.ripper.RipperTradeScreen;
+import com.perigrine3.createcybernetics.screen.custom.surgery.ripper.SurgeryPaymentScreen;
+import com.perigrine3.createcybernetics.screen.custom.surgery.robosurgeon.RobosurgeonScreen;
+import com.perigrine3.createcybernetics.screen.custom.surgery.surgery_table.SurgeryTableScreen;
 import com.perigrine3.createcybernetics.sound.ModSounds;
+import com.perigrine3.createcybernetics.worldgen.ModStructureTypes;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.world.item.Items;
@@ -86,11 +102,19 @@ public class CreateCybernetics {
         ModRecipes.register(eventBus);
         ModRecipeSerializers.register(eventBus);
 
+        ModStructureTypes.register(eventBus);
+
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
         CompatBootstrap.bootstrap();
 
         ModAttachments.register(eventBus);
+        ModMobAttachments.register(eventBus);
         ModAttributes.register(eventBus);
+
+        if (CorpseCompat.isLoaded()) {
+            ModCorpseCompatMenus.register(eventBus);
+        }
+
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
@@ -139,9 +163,16 @@ public class CreateCybernetics {
         }
 
         if (event.getTabKey() == CreativeModeTabs.SPAWN_EGGS) {
+            event.accept(ModItems.RIPPER_SPAWN_EGG);
+            event.accept(ModItems.TATHOG_SPAWN_EGG);
+
             event.accept(ModItems.SMASHER_SPAWN_EGG);
             event.accept(ModItems.CYBERZOMBIE_SPAWN_EGG);
             event.accept(ModItems.CYBERSKELETON_SPAWN_EGG);
+
+            event.accept(ModItems.HOGBOY_SPAWN_EGG);
+            event.accept(ModItems.PUNKLIN_SPAWN_EGG);
+            event.accept(ModItems.PIGSTROM_SPAWN_EGG);
         }
 
         if (event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
@@ -189,11 +220,19 @@ public class CreateCybernetics {
         public static void onClientSetup(FMLClientSetupEvent event) {
             EntityRenderers.register(ModEntities.NUGGET_PROJECTILE.get(), NuggetProjectileRenderer::new);
             EntityRenderers.register(ModEntities.EMP_GRENADE_PROJECTILE.get(), ThrownItemRenderer::new);
+            EntityRenderers.register(ModEntities.GUARDIAN_BEAM.get(), GuardianBeamRenderer::new);
+            EntityRenderers.register(ModEntities.ARC_LIGHTNING_BOLT.get(), ArcLightningBoltRenderer::new);
+
+            EntityRenderers.register(ModEntities.RIPPER.get(), RipperRenderer::new);
+            EntityRenderers.register(ModEntities.TATHOG.get(), TatHogRenderer::new);
 
             EntityRenderers.register(ModEntities.SMASHER.get(), SmasherRenderer::new);
             EntityRenderers.register(ModEntities.CYBERZOMBIE.get(), CyberzombieRenderer::new);
             EntityRenderers.register(ModEntities.CYBERSKELETON.get(), CyberskeletonRenderer::new);
-            EntityRenderers.register(ModEntities.GUARDIAN_BEAM.get(), GuardianBeamRenderer::new);
+
+            EntityRenderers.register(ModEntities.HOGBOY.get(), HogBoyRenderer::new);
+            EntityRenderers.register(ModEntities.PUNKLIN.get(), PunklinRenderer::new);
+            EntityRenderers.register(ModEntities.PIGSTROM.get(), PigstromRenderer::new);
         }
 
         @SubscribeEvent
@@ -206,6 +245,16 @@ public class CreateCybernetics {
             event.register(ModMenuTypes.SPINAL_INJECTOR_MENU.get(), SpinalInjectorScreen::new);
             event.register(ModMenuTypes.ARM_CANNON_MENU.get(), ArmCannonScreen::new);
             event.register(ModMenuTypes.HEAT_ENGINE_MENU.get(), HeatEngineScreen::new);
+            event.register(ModMenuTypes.CYBERDECK_MENU.get(), CyberdeckScreen::new);
+            event.register(ModMenuTypes.SURGERY_TABLE_MENU.get(), SurgeryTableScreen::new);
+            event.register(ModMenuTypes.RIPPER_TRADE_MENU.get(), RipperTradeScreen::new);
+            event.register(ModMenuTypes.SURGERY_PAYMENT_MENU.get(), SurgeryPaymentScreen::new);
+            event.register(ModMenuTypes.TATTOO_MENU.get(), TattooArtistScreen::new);
+
+            if (CorpseCompat.isLoaded()) {
+                event.register(ModCorpseCompatMenus.CORPSE_CYBERWARE.get(), CorpseCyberwareScreen::new);
+            }
+
         }
     }
 

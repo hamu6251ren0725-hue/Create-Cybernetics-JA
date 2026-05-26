@@ -70,7 +70,14 @@ config="createcybernetics.mixins.json"
     modId="create"
     type="optional"
     versionRange="[6.0.8,6.1.0)"
-    ordering="NONE"
+    ordering="AFTER"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="northstar"
+    type="optional"
+    versionRange="[0,)"
+    ordering="AFTER"
     side="BOTH"
 
 [[dependencies.${mod_id}]]
@@ -114,6 +121,20 @@ config="createcybernetics.mixins.json"
     versionRange="*"
     ordering="NONE"
     side="CLIENT"
+
+[[dependencies.${mod_id}]]
+    modId="bettercombat"
+    type="optional"
+    versionRange="*"
+    ordering="AFTER"
+    side="CLIENT"
+
+[[dependencies.${mod_id}]]
+    modId="corpse"
+    type="optional"
+    versionRange="*"
+    ordering="NONE"
+    side="BOTH"
 
 # Here's another dependency
 [[dependencies.${mod_id}]]

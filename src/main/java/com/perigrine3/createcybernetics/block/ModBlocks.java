@@ -2,7 +2,6 @@ package com.perigrine3.createcybernetics.block;
 
 import com.perigrine3.createcybernetics.CreateCybernetics;
 import com.perigrine3.createcybernetics.item.ModItems;
-import com.perigrine3.createcybernetics.screen.custom.GraftingTableMenu;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.*;
@@ -78,7 +77,7 @@ public class ModBlocks {
             () -> new RobosurgeonBlock(BlockBehaviour.Properties.of().strength(6, 8)
                     .noOcclusion().sound(SoundType.METAL)), true);
     public static final DeferredBlock<Block> CHARGING_BLOCK = registerBlock("charging_block",
-            () -> new Block(BlockBehaviour.Properties.of().strength(6, 8)
+            () -> new ChargingBlock(BlockBehaviour.Properties.of().strength(6, 8)
                     .noOcclusion().sound(SoundType.METAL)), true);
     public static final DeferredBlock<Block> ENGINEERING_TABLE = registerBlock("engineering_table",
             () -> new EngineeringTableBlock(BlockBehaviour.Properties.of().strength(6, 6)
@@ -89,6 +88,9 @@ public class ModBlocks {
     public static final DeferredBlock<Block> HOLOPROJECTOR = registerBlock("holoprojector",
             () -> new HoloprojectorBlock(BlockBehaviour.Properties.of().strength(3, 3)
                     .noOcclusion().sound(SoundType.METAL)), true);
+    public static final DeferredBlock<Block> SURGERY_TABLE = registerBlock("surgery_table",
+            () -> new SurgeryTableBlock(BlockBehaviour.Properties.of().strength(2.5F, 3)
+                            .noOcclusion().sound(SoundType.METAL)), true);
 
 //PLANT BLOCKS
     public static final DeferredBlock<Block> DATURA_BUSH = BLOCKS.register("datura_bush",

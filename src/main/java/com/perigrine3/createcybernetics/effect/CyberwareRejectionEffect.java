@@ -1,11 +1,12 @@
 package com.perigrine3.createcybernetics.effect;
 
+import com.perigrine3.createcybernetics.ConfigValues;
 import com.perigrine3.createcybernetics.common.capabilities.ModAttachments;
 import com.perigrine3.createcybernetics.common.capabilities.PlayerCyberwareData;
 import com.perigrine3.createcybernetics.common.damage.ModDamageSources;
+import com.perigrine3.createcybernetics.common.humanity.HumanityAttributeModifiers;
 import net.minecraft.core.Holder;
 import net.minecraft.util.Mth;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -35,32 +36,41 @@ public class CyberwareRejectionEffect extends MobEffect {
 
     @Override
     public boolean applyEffectTick(LivingEntity living, int amplifier) {
-        if (!(living instanceof Player player)) return true;
-        if (player.level().isClientSide) return true;
+        if (!(living instanceof Player player)) {
+            return true;
+        }
+
+        if (player.level().isClientSide) {
+            return true;
+        }
 
         PlayerCyberwareData data = player.getData(ModAttachments.CYBERWARE);
-        if (data == null) return true;
+        if (data == null) {
+            return true;
+        }
 
-        int currentHumanity = data.getHumanity();
-        int maxHumanity = Math.max(100, currentHumanity);
-        float percent = maxHumanity <= 0 ? 0f : (currentHumanity / (float) maxHumanity);
+        int currentHumanity = HumanityAttributeModifiers.get(player);
+        int maxHumanity = Math.max(1, ConfigValues.BASE_HUMANITY);
 
-        if (percent > DANGER_THRESHOLD) return true;
+        float percent = currentHumanity / (float) maxHumanity;
+        if (percent > DANGER_THRESHOLD) {
+            return true;
+        }
 
         float progress = (DANGER_THRESHOLD - percent) / DANGER_THRESHOLD;
-        progress = Mth.clamp(progress, 0f, 1f);
+        progress = Mth.clamp(progress, 0.0F, 1.0F);
 
         float chance = MIN_CHANCE + progress * (MAX_CHANCE - MIN_CHANCE);
         int durationTicks = DEBUFF_BASE + Mth.floor(progress * DEBUFF_EXTRA);
-        int debuffAmp = (progress >= 0.66f) ? 2 : (progress >= 0.33f) ? 1 : 0;
+        int debuffAmp = progress >= 0.66F ? 2 : progress >= 0.33F ? 1 : 0;
 
-        maybeApply(player, MobEffects.WEAKNESS,      chance * 1.00f, durationTicks, debuffAmp);
-        maybeApply(player, MobEffects.DIG_SLOWDOWN,  chance * 0.90f, durationTicks, debuffAmp);
-        maybeApply(player, MobEffects.CONFUSION,     chance * 0.80f, durationTicks, 0);
+        maybeApply(player, MobEffects.WEAKNESS, chance, durationTicks, debuffAmp);
+        maybeApply(player, MobEffects.DIG_SLOWDOWN, chance * 0.90F, durationTicks, debuffAmp);
+        maybeApply(player, MobEffects.CONFUSION, chance * 0.80F, durationTicks, 0);
 
         if (player.getRandom().nextFloat() < DAMAGE_CHANCE_PER_TICK) {
             float base = (float) (1 << Math.min(30, amplifier));
-            float scaled = base * (0.25f + 0.75f * progress);
+            float scaled = base * (0.25F + 0.75F * progress);
             player.hurt(ModDamageSources.cyberwareRejection(player.level(), player, null), scaled);
         }
 
@@ -68,10 +78,19 @@ public class CyberwareRejectionEffect extends MobEffect {
     }
 
     private static void maybeApply(Player player, Holder<MobEffect> effect, float chance, int duration, int amplifier) {
-        if (chance <= 0f) return;
-        if (player.getRandom().nextFloat() >= chance) return;
+        if (chance <= 0.0F) {
+            return;
+        }
+
+        if (player.getRandom().nextFloat() >= chance) {
+            return;
+        }
+
         MobEffectInstance existing = player.getEffect(effect);
-        if (existing != null && existing.getDuration() > duration / 2) return;
+        if (existing != null && existing.getDuration() > duration / 2) {
+            return;
+        }
+
         player.addEffect(new MobEffectInstance(effect, duration, amplifier, false, false, true));
     }
 }
